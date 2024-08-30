@@ -1,0 +1,20 @@
+﻿<Window x:Name="LoginWin" x:Class="WpfApp1.AppWindows.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1.AppWindows"
+        mc:Ignorable="d"
+        Title="LoginWindow" Height="280" Width="350" Closing="LoginWin_Closing">
+    <Grid>
+        <Label Content="Username" HorizontalAlignment="Left" Margin="17,25,0,0" VerticalAlignment="Top" Width="74" Height="28" HorizontalContentAlignment="Right"/>
+        <TextBox x:Name="Username_TextBox" MaxLength="26" HorizontalAlignment="Left" Margin="96,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="138" Height="28" VerticalContentAlignment="Center" FontSize="12"/>
+        <Label Content="Password" HorizontalAlignment="Left" Margin="17,60,0,0" VerticalAlignment="Top" Width="74" Height="28" HorizontalContentAlignment="Right"/>
+        <PasswordBox x:Name="Password_PasswordBox" MaxLength="20" HorizontalAlignment="Left" Margin="96,60,0,0" VerticalAlignment="Top" Width="138" Height="28"/>
+
+        <Button x:Name="Login_Button" Content="Log-in" HorizontalAlignment="Left" Margin="96,120,0,0" VerticalAlignment="Top" Width="72" Height="30" Click="Login_Button_Click"/>
+        <Button x:Name="Register_Button" Content="Register" HorizontalAlignment="Left" Margin="182,120,0,0" VerticalAlignment="Top" Width="72" Height="30" Click="Register_Button_Click"/>
+        <Button x:Name="ForgottenPasswd_Button" Content="Forgotten Password" HorizontalAlignment="Center" Margin="0,158,0,0" VerticalAlignment="Top" Width="158" Height="42" Click="ForgottenPasswd_Button_Click"/>
+
+    </Grid>
+</Window>
