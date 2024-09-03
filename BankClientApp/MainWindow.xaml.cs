@@ -1,6 +1,11 @@
-﻿using System.Text.Json;
+﻿using System.IO;
+using System.Net.Sockets;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Windows;
 using BankClientApp.Model;
+using BankClientApp.Packets.ResponsePackets;
 using WpfApp1.AppWindows;
 using WpfApp1.Packets;
 
@@ -18,7 +23,6 @@ public partial class MainWindow : Window
     
     private void BankingMainWinLoaded(object sender, RoutedEventArgs e)
     {
-        
         LoginWindow window = new LoginWindow
         {
             Owner = this,
@@ -29,26 +33,64 @@ public partial class MainWindow : Window
         this.IsEnabled = false;
     }
 
-    private void TestingFunction()
+    public void GetLoginData(string username, string password)
     {
-        FinanceProfile first  = new FinanceProfile(45145154, 4000, "CZK");
-        FinanceProfile second = new FinanceProfile(454544, 4000, "CZK");
-        FinanceProfile third = new FinanceProfile(4121, 20000000, "USD");
+        MessageBox.Show($"Given username: {username}\nGiven password: {password}", "GetLoginData<void>(string, string)", MessageBoxButton.OK);
+        TestingFunction(username, password);
+    }
+    
+    private void TestingFunction(string username, string password)
+    {
+        ClientProfile profile = new ClientProfile(418474, username, password);
+        // profile.AddFinanceAccount(new FinanceProfile(15233, (decimal)230145.35, "CZK"));
 
-        first.AddTransaction(new Transaction(first, second, 
-            (decimal)4000.0, "", ""));
         
-        first.AddTransaction(new Transaction(third, first, 
-            (decimal)9000.0, "Druha transakce", "Davaj prachy kamo"));
+        string json = JsonSerializer.Serialize(new CreateClientProfilePacket(profile));
         
-        third.AddTransaction(new Transaction(third, first, 
-            (decimal)9000.0, "Druha transakce", "Davaj prachy kamo"));
+        try
+        {
+            TcpClient client = new TcpClient("127.0.0.1", 6666);
+            Stream stream = client.GetStream();
+            
+            byte[] bytes = Encoding.UTF8.GetBytes(json);
+            stream.Write(bytes, 0, bytes.Length);
 
-        ClientProfile profileOne = new ClientProfile(155415555, "firstUsername", "firstPass");
-        ClientProfile profileTwo = new ClientProfile(1234635, "secondUsername", "secondPass");
-        
-        profileOne.AddFinanceAccount(first);
-        profileOne.AddFinanceAccount(second);
-        profileTwo.AddFinanceAccount(third);
+            byte[] bytesToRead = new byte[client.ReceiveBufferSize];
+            int bytesRead = stream.Read(bytesToRead, 0, client.ReceiveBufferSize);
+
+            string received = Encoding.UTF8.GetString(bytesToRead).TrimEnd('\0') ?? JsonSerializer.Serialize(new BasePacket());
+
+            BasePacket packet = BasePacket.DeserializePacket(received);
+
+            if (packet.PacketId == (int)EPacketIDs.OkPacket)
+            {
+                MessageBox.Show("Packet was successful!");
+            }
+            else if (packet.PacketId == (int)EPacketIDs.BadPacket)
+            {
+                ErrorPacket errPacket = JsonSerializer.Deserialize<ErrorPacket>(received);
+                MessageBox.Show($"Error has occured!\nMessage: {errPacket.Message}", "Error", MessageBoxButton.OK);
+            }
+            else
+            {
+                MessageBox.Show($"Invalid packet received!\nReceived: {received}");
+            }
+
+            client.Close();
+            stream.Close();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+
+            LoginWindow win = new LoginWindow()
+            {
+                Owner = this,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+            
+            win.Show();
+            this.IsEnabled = false;
+        }
     }
 }

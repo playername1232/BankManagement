@@ -2,7 +2,7 @@ namespace BankClientApp.Model;
 
 public class Transaction
 {
-    public ulong         TransactionId  { get; private set; } 
+    public ulong          TransactionId { get; private set; } 
     public FinanceProfile Sender        { get; private set; }
     public FinanceProfile Receiver      { get; private set; }
     public decimal        Amount        { get; private set; }

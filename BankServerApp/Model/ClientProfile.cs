@@ -2,12 +2,12 @@ namespace BankClientApp.Model;
 
 public class ClientProfile
 {
-    public long   ClientId { get; private set; }
+    public ulong  ClientId { get; private set; }
     public string Username { get; private set; }
     public string Password { get; private set; }
-    public List<FinanceProfile> ClientBankAccounts { get; private set; }
+    private List<FinanceProfile> ClientBankAccounts { get; set; }
 
-    public ClientProfile(long clientId, string username, string password)
+    public ClientProfile(ulong clientId, string username, string password)
     {
         this.ClientId = clientId;
         this.Username = username;
@@ -17,7 +17,7 @@ public class ClientProfile
     }
     
     // ctor for deserialization
-    public ClientProfile(long clientId, string username, string password, List<FinanceProfile> bankAccounts)
+    public ClientProfile(ulong clientId, string username, string password, List<FinanceProfile> bankAccounts)
     {
         this.ClientId = clientId;
         this.Username = username;
@@ -26,6 +26,8 @@ public class ClientProfile
         this.ClientBankAccounts = bankAccounts;
     }
 
+    public List<FinanceProfile> GetBankAccounts() => this.ClientBankAccounts;
+    
     public void AddFinanceAccount(FinanceProfile profile)
     {
         if (ClientBankAccounts.Any(x => x.AccountId == profile.AccountId))

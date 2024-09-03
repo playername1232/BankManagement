@@ -1,11 +1,15 @@
 using System.Text.Json.Serialization;
+using BankClientApp.Model;
 
 namespace WpfApp1.Packets;
 
 public class CreateFinanceProfilePacket : BasePacket
 {
+    // Property used for database serialization and deserialization only, otherwise Bank account holds no reference to its owner
     [JsonInclude]
-    public long     AccountOwnerID { get; private set; }
+    public ulong    AccountOwnerId { get; private set; }
+    [JsonInclude]
+    public ulong    AccountId      { get; private set; }
     [JsonInclude]
     public decimal  AccountBalance { get; private set; }
     [JsonInclude]
@@ -13,15 +17,19 @@ public class CreateFinanceProfilePacket : BasePacket
 
     public CreateFinanceProfilePacket() : base((int)EPacketIDs.CreateFinanceAccountPacket)
     {
-        this.AccountOwnerID = long.MinValue;
+        this.AccountOwnerId = ulong.MinValue;
         this.AccountBalance = decimal.MinValue;
         this.CurrencyName   = "ERROR";
     }
 
-    public CreateFinanceProfilePacket(long accountOwnerId, decimal accountBalance, string currencyName) : base((int)EPacketIDs.CreateFinanceAccountPacket)
+    public CreateFinanceProfilePacket(ulong accountOwnerId, ulong accountId, decimal accountBalance, string currencyName) : base((int)EPacketIDs.CreateFinanceAccountPacket)
     {
-        AccountOwnerID = accountOwnerId;
+        AccountOwnerId = accountOwnerId;
+        AccountId      = accountId;
         AccountBalance = accountBalance;
-        CurrencyName = currencyName ?? throw new ArgumentNullException(nameof(currencyName));
+        CurrencyName   = currencyName ?? throw new ArgumentNullException(nameof(currencyName));
     }
+
+    public static FinanceProfile ConvertToFinanceProfile(CreateFinanceProfilePacket packet) =>
+        new FinanceProfile(packet.AccountId, packet.AccountBalance, packet.CurrencyName);
 }

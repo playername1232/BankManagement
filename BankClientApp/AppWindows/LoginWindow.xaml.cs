@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using BankClientApp;
 
 namespace WpfApp1.AppWindows
 {
@@ -31,8 +32,11 @@ namespace WpfApp1.AppWindows
 
         private void Login_Button_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show($"Username entered: {Username_TextBox.Text}\n" +
-                                         $"Password entered: {Password_PasswordBox.Password}");
+            string username = Username_TextBox.Text;
+            string password = Password_PasswordBox.Password;
+            
+            ((MainWindow)this.Owner).GetLoginData(username, password);
+            this.Close();
         }
 
         private void ForgottenPasswd_Button_Click(object sender, RoutedEventArgs e)

@@ -2,10 +2,10 @@ namespace BankClientApp.Model;
 
 public class FinanceProfile
 {
-    public ulong  AccountId       { get; private set; }
+    public ulong   AccountId      { get; private set; }
     public decimal AccountBalance { get; private set; }
     public string  CurrencyName   { get; private set; }
-    public List<Transaction> HistoryOfTransactions   { get; private set; }
+    private List<Transaction> HistoryOfTransactions   { get; set; }
 
     public FinanceProfile(ulong accountId, decimal accountBalance, string currencyName)
     {
@@ -24,11 +24,19 @@ public class FinanceProfile
         HistoryOfTransactions = historyOfTransactions;
     }
 
-    public void AddTransaction(Transaction transaction)
+    public void AddTransaction(Transaction transaction, bool adjustAccountBalance = true)
     {
         if (HistoryOfTransactions.Any(x => x.TransactionId == transaction.TransactionId))
             return;
         
         HistoryOfTransactions.Add(transaction);
+    }
+
+    public void RemoveTransaction(Transaction transaction, bool adjustAccountBalance = true)
+    {
+        Transaction trans = HistoryOfTransactions.First(x => x.TransactionId == transaction.TransactionId);
+        
+        if (trans != null)
+            HistoryOfTransactions.Remove(trans);
     }
 }

@@ -1,6 +1,6 @@
-namespace BankClientApp.Model;
+﻿namespace BankClientApp.Model;
 
-public class TransactionProvider
+public abstract class TransactionProvider
 {
     /// <summary>
     /// Registers incoming transaction for both Sender and Receiver
@@ -8,7 +8,13 @@ public class TransactionProvider
     /// <param name="transaction">New transaction</param>
     public static void RegisterNewTransaction(Transaction transaction)
     {
-        transaction.Receiver.HistoryOfTransactions.Add(transaction);
-        transaction.Sender.HistoryOfTransactions.Add(transaction);
+        transaction.Receiver.AddTransaction(transaction);
+        transaction.Sender.AddTransaction(transaction);
+    }
+
+    public static void RevertTransaction(Transaction transaction)
+    {
+        transaction.Receiver.RemoveTransaction(transaction);
+        transaction.Sender.RemoveTransaction(transaction);
     }
 }
